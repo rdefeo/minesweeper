@@ -5,7 +5,7 @@ from random import randrange
 
 # Mine Field 
 FLAG = -2
-BOMB = -1
+MINE = -1
 EMPTY = 0
 DISPLAY = { -2: '`', -1: '*', 0: ' ', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8' }
 
@@ -23,6 +23,7 @@ class MineField():
         self.grid = defaultdict(int)
         self.cover = defaultdict(int)
         self.started = False # has the player clicked yet?
+        self.losing_mine = None
         self.debug = debug
         self.create()
         
@@ -50,20 +51,20 @@ class MineField():
                     break
             if not good_bomb:
                 continue
-            if self.grid[(x,y)] != BOMB:
-                self.grid[(x,y)] = BOMB
+            if self.grid[(x,y)] != MINE:
+                self.grid[(x,y)] = MINE
                 total -= 1
                         
         # add the number counts
         for y in range(self.height):
             for x in range(self.width):
-                if self.grid[(x,y)] == BOMB:
+                if self.grid[(x,y)] == MINE:
                     continue
                 bombs = 0
                 for dx,dy in [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]:
                     p = (x+dx,y+dy)
                     if p in self.grid:
-                        if self.grid[p] == BOMB:
+                        if self.grid[p] == MINE:
                             bombs += 1
                 self.grid[(x,y)] = bombs
         self.started = True

@@ -38,7 +38,7 @@ print(args.width,args.height,args.difficulty)
 gfx = Graphics(args.width,args.height)
 gfx.init()
 
-mf = MineField(args.width,args.height,args.difficulty,args.debug)
+mf = MineField(args.width,args.height,args.difficulty)
 
 print("Starting game loop")
 
@@ -63,8 +63,9 @@ while running:
                     
                 if mf.cover[(cx,cy)] == COVERED:
                     mf.cover[(cx,cy)] = VISIBLE
-                    if mf.grid[(cx,cy)] == BOMB:
+                    if mf.grid[(cx,cy)] == MINE:
                         print("GAME OVER!")
+                        mf.losing_mine = (cx,cy)
                         gfx.game_over(mf)
                     else:
                         mf.try_clear_space((cx,cy))
