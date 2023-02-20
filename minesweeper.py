@@ -10,16 +10,28 @@ import argparse
 import time
 
 
-parser = argparse.ArgumentParser(description="Minesweeper")
+class MultiLineFormatter(argparse.HelpFormatter):
+    def _split_lines(self, text, width):
+        if text.startswith('ML|'):
+            return text[3:].splitlines()
+        return argparse.HelpFormatter._split_lines(self,text,width)
+    
+parser = argparse.ArgumentParser(description="Minesweeper", formatter_class=MultiLineFormatter)
 parser.add_argument('-W','--width',type=int,nargs='?',default=15,
-                    help='Width of minefield (default: %(default)i)')
+                    help="ML|Width of minefield\n(default: %(default)i)")
 parser.add_argument('-H','--height',type=int,nargs='?',default=10,
-                    help='Height of minefield (default: %(default)i)')
+                    help="ML|Height of minefield\n(default: %(default)i)")
 parser.add_argument('-D','--difficulty',type=float,nargs='?',default=0.1,
-                    help='Difficulty, measured as a percentage of total cells that have a bomb.\
-                    A value of 0.1 means 10%% of the cells will have a bomb. (default: %(default)f)')
+                    help="ML|Difficulty, measured as a percentage of total cells that have a bomb.\n"
+                    "A value of 0.15 means 15%% of the cells will have a bomb.\n"
+                    "(default: %(default)f)")
 args = parser.parse_args()
 
+bombs = int(args.width*args.height*args.difficulty)
+if bombs <= 0 or bombs >= (args.width*args.height)//2:
+    print("ERROR: Bad arguments!")
+    exit()
+    
 print(args.width,args.height,args.difficulty)
 
 gfx = Graphics(args.width,args.height)
@@ -61,12 +73,12 @@ while running:
                         mfc.cover[(cx,cy)] = COVERED
             continue
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.key in [pygame.K_ESCAPE, pygame.K_q]:
                 running = False
                 break
             if event.key == pygame.K_r:
                 print("Restarting game")
-                mf = MineField(WIDTH, HEIGHT, DIFF)
+                mf = MineField(args.width, args.height, args.difficulty)
                 mfc = MineFieldCover(mf)
                 gfx.restart()
         if event.type == pygame.QUIT:
