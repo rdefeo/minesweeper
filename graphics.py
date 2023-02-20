@@ -15,7 +15,7 @@ BORDER = 6
 
 class Graphics():
 
-    def __init__(self,mine_width,mine_height,mine_size=30):
+    def __init__(self,mine_width,mine_height,mine_size=40):
         self.mine_width = int(mine_width)
         self.mine_height = int(mine_height)
         self.mine_size = mine_size
