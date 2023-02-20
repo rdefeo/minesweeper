@@ -18,21 +18,19 @@ When running the game, the following keyboard/mouse commands are available:
 ## Usage
 ```
 $ python ./minesweeper.py --help
-usage: minesweeper.py [-h] [-W [WIDTH]] [-H [HEIGHT]] [-D [DIFFICULTY]] [--debug]
+usage: minesweeper.py [-h] [-W WIDTH] [-H HEIGHT] [-D DIFFICULTY] [--debug]
 
-Minesweeper
+Minesweeper game written with pygame
 
 optional arguments:
   -h, --help            show this help message and exit
-  -W [WIDTH], --width [WIDTH]
-                        Width of minefield
-                        (default: 15)
-  -H [HEIGHT], --height [HEIGHT]
-                        Height of minefield
-                        (default: 10)
-  -D [DIFFICULTY], --difficulty [DIFFICULTY]
+  -W WIDTH, --width WIDTH
+                        Width of minefield. Default = 15
+  -H HEIGHT, --height HEIGHT
+                        Height of minefield. Default = 10
+  -D DIFFICULTY, --difficulty DIFFICULTY
                         Difficulty, measured as a percentage of total cells that have a mine.
-                        A value of 0.15 means 15% of the cells will have a mine.
-                        (default: 0.100000)
+                        A value of 0.15 means 15% of the cells will have a mine. Suggested range
+                        is between 0.10 and 0.30. Default = 0.10
   --debug               Displays all mines and mine counts
 ```
