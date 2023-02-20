@@ -3,6 +3,8 @@
 
 Simple minesweeper implementation using pygame. You can control the size of the mine field, and the difficulty, by using command line arguments.
 
+![screenshot](screenshot.png)
+
 ## Usage
 ```
 $ python ./minesweeper.py --help
