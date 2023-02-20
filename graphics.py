@@ -41,12 +41,12 @@ class Graphics():
         pygame.event.set_allowed(pygame.QUIT)
         print(f"Initialization time: {round(time.time()-start,3)}")
 
-    def draw(self,mfc: MineFieldCover,mf: MineField):
+    def draw(self,mf: MineField):
         self.screen.fill((128,128,128))
-        for y in range(mfc.field.height):
-            for x in range(mfc.field.width):
-                cover = mfc.cover[(x,y)]
-                mine = mfc.field.grid[(x,y)]
+        for y in range(mf.height):
+            for x in range(mf.width):
+                cover = mf.cover[(x,y)]
+                mine = mf.grid[(x,y)]
                 xpos = x * self.mine_size
                 ypos = y * self.mine_size
                 if cover == COVERED:
@@ -61,17 +61,20 @@ class Graphics():
                     self.screen.blit(flag, flag_rect)
                 else:
                     pygame.draw.rect(self.screen,(60,60,60),pygame.Rect(xpos,ypos,self.mine_size,self.mine_size),2)
-                    g = mfc.field.grid[(x,y)]
+                    g = mf.grid[(x,y)]
                     if g != 0:
-                        num = self.font.render(DISPLAY[mfc.field.grid[(x,y)]], True, NUM_COLOR[g])
+                        num = self.font.render(DISPLAY[mf.grid[(x,y)]], True, NUM_COLOR[g])
                         num_rect = num.get_rect()
                         num_rect.center = (xpos + self.mine_size//2, ypos + self.mine_size//2)
                         self.screen.blit(num, num_rect)
         if self.state == GAME_OVER:
-            self.game_over()
+            self.game_over(mf)
         
-    def game_over(self):
+    def game_over(self,mf:MineField):
         self.state = GAME_OVER
+        for c,v in mf.cover.items():
+            if mf.grid[c] == BOMB:
+                mf.cover[c] = VISIBLE
         self.banner("Game Over!", (255,255,0))
 
     def win(self):

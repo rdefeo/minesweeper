@@ -25,20 +25,20 @@ parser.add_argument('-D','--difficulty',type=float,nargs='?',default=0.1,
                     help="ML|Difficulty, measured as a percentage of total cells that have a bomb.\n"
                     "A value of 0.15 means 15%% of the cells will have a bomb.\n"
                     "(default: %(default)f)")
+parser.add_argument('--debug',type=int,nargs='?',default=0)
 args = parser.parse_args()
 
 bombs = int(args.width*args.height*args.difficulty)
-if bombs <= 0 or bombs >= (args.width*args.height)//2:
-    print("ERROR: Bad arguments!")
-    exit()
+#if bombs <= 0 or bombs >= (args.width*args.height)//2:
+#    print("ERROR: Bad arguments! Difficulty too high or grid poorly sized")
+#    exit()
     
 print(args.width,args.height,args.difficulty)
 
 gfx = Graphics(args.width,args.height)
 gfx.init()
 
-mf = MineField(args.width,args.height,args.difficulty)
-mfc = MineFieldCover(mf)
+mf = MineField(args.width,args.height,args.difficulty,args.debug)
 
 print("Starting game loop")
 
@@ -47,9 +47,9 @@ running = True
 while running:
     gfx.clock.tick(30)
 
-    gfx.draw(mfc,mf)
+    gfx.draw(mf)
 
-    if mfc.win():
+    if mf.win():
         gfx.win()
         
     for event in pygame.event.get():
@@ -58,19 +58,22 @@ while running:
             cx = mx // gfx.mine_size
             cy = my // gfx.mine_size
             if event.button == 1:
-                if mfc.cover[(cx,cy)] == COVERED:
-                    mfc.cover[(cx,cy)] = VISIBLE
-                    if mfc.field.grid[(cx,cy)] == BOMB:
+                if mf.started == False:
+                    mf.place_bombs((cx,cy))
+                    
+                if mf.cover[(cx,cy)] == COVERED:
+                    mf.cover[(cx,cy)] = VISIBLE
+                    if mf.grid[(cx,cy)] == BOMB:
                         print("GAME OVER!")
-                        gfx.game_over()
+                        gfx.game_over(mf)
                     else:
-                        mfc.try_clear_space((cx,cy))
+                        mf.try_clear_space((cx,cy))
             elif event.button == 3:
-                if mfc.cover[(cx,cy)] != VISIBLE:
-                    if mfc.cover[(cx,cy)] == COVERED:
-                        mfc.cover[(cx,cy)] = FLAGGED
+                if mf.cover[(cx,cy)] != VISIBLE:
+                    if mf.cover[(cx,cy)] == COVERED:
+                        mf.cover[(cx,cy)] = FLAGGED
                     else:
-                        mfc.cover[(cx,cy)] = COVERED
+                        mf.cover[(cx,cy)] = COVERED
             continue
         if event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_ESCAPE, pygame.K_q]:
@@ -79,7 +82,6 @@ while running:
             if event.key == pygame.K_r:
                 print("Restarting game")
                 mf = MineField(args.width, args.height, args.difficulty)
-                mfc = MineFieldCover(mf)
                 gfx.restart()
         if event.type == pygame.QUIT:
             running = False
