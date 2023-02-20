@@ -19,7 +19,7 @@ class MineField():
         self.width = int(width)
         self.height = int(height)
         self.difficulty = float(difficulty)
-        self.bomb_count = int((self.width * self.height) * self.difficulty)
+        self.mine_count = int((self.width * self.height) * self.difficulty)
         self.grid = defaultdict(int)
         self.cover = defaultdict(int)
         self.started = False # has the player clicked yet?
@@ -28,28 +28,32 @@ class MineField():
         self.create()
         
     def create(self):
-        # difficulty determines how many bombs in grid as a percentage of overall cells
-        print(f"Creating {self.bomb_count} bombs on {self.width} x {self.height}")
+        # difficulty determines how many mines in grid as a percentage of overall cells
+        print(f"Creating {self.mine_count} mines on {self.width} x {self.height}, difficulty = {self.difficulty}")
+    
 
         # nothing is visible at the start!
         for y in range(self.height):
             for x in range(self.width):
                 self.cover[(x,y)] = COVERED if self.debug == 0 else VISIBLE
 
-    def place_bombs(self, clicked):
-        total = self.bomb_count
+        if self.debug:
+            self.place_mines((self.width//2,self.height//2))
+                
+    def place_mines(self, clicked):
+        total = self.mine_count
         while total:
             b = randrange(self.width * self.height)
             x = b % self.width
             y = b // self.width
             if (x,y) == clicked:
                 continue
-            good_bomb = True
+            good_mine = True
             for dx,dy in [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]:
                 if (x,y) == (clicked[0]+dx,clicked[1]+dy):
-                    good_bomb = False
+                    good_mine = False
                     break
-            if not good_bomb:
+            if not good_mine:
                 continue
             if self.grid[(x,y)] != MINE:
                 self.grid[(x,y)] = MINE
@@ -60,13 +64,13 @@ class MineField():
             for x in range(self.width):
                 if self.grid[(x,y)] == MINE:
                     continue
-                bombs = 0
+                mines = 0
                 for dx,dy in [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]:
                     p = (x+dx,y+dy)
                     if p in self.grid:
                         if self.grid[p] == MINE:
-                            bombs += 1
-                self.grid[(x,y)] = bombs
+                            mines += 1
+                self.grid[(x,y)] = mines
         self.started = True
                 
     def try_clear_space(self,pos):
@@ -94,7 +98,7 @@ class MineField():
         return s
 
     def win(self):
-        if sum([1 for c in self.cover.values() if c != VISIBLE]) == self.bomb_count:
+        if sum([1 for c in self.cover.values() if c != VISIBLE]) == self.mine_count:
             return True
         return False
 

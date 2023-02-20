@@ -22,23 +22,23 @@ parser.add_argument('-W','--width',type=int,nargs='?',default=15,
 parser.add_argument('-H','--height',type=int,nargs='?',default=10,
                     help="ML|Height of minefield\n(default: %(default)i)")
 parser.add_argument('-D','--difficulty',type=float,nargs='?',default=0.1,
-                    help="ML|Difficulty, measured as a percentage of total cells that have a bomb.\n"
-                    "A value of 0.15 means 15%% of the cells will have a bomb.\n"
+                    help="ML|Difficulty, measured as a percentage of total cells that have a mine.\n"
+                    "A value of 0.15 means 15%% of the cells will have a mine.\n"
                     "(default: %(default)f)")
-parser.add_argument('--debug',type=int,nargs='?',default=0)
+parser.add_argument('--debug',action="store_true",help="Displays all mines and mine counts")
 args = parser.parse_args()
 
-bombs = int(args.width*args.height*args.difficulty)
-#if bombs <= 0 or bombs >= (args.width*args.height)//2:
-#    print("ERROR: Bad arguments! Difficulty too high or grid poorly sized")
-#    exit()
+mines = int(args.width*args.height*args.difficulty)
+if mines <= 0 or mines >= (args.width*args.height)//2:
+    print("ERROR: Bad arguments! Difficulty too high or grid poorly sized")
+    exit()
     
-print(args.width,args.height,args.difficulty)
+#print(args.width,args.height,args.difficulty)
 
 gfx = Graphics(args.width,args.height)
 gfx.init()
 
-mf = MineField(args.width,args.height,args.difficulty)
+mf = MineField(args.width,args.height,args.difficulty,args.debug)
 
 print("Starting game loop")
 
@@ -59,7 +59,7 @@ while running:
             cy = my // gfx.mine_size
             if event.button == 1:
                 if mf.started == False:
-                    mf.place_bombs((cx,cy))
+                    mf.place_mines((cx,cy))
                     
                 if mf.cover[(cx,cy)] == COVERED:
                     mf.cover[(cx,cy)] = VISIBLE
@@ -82,8 +82,44 @@ while running:
                 break
             if event.key == pygame.K_r:
                 print("Restarting game")
-                mf = MineField(args.width, args.height, args.difficulty)
+                mf = MineField(args.width, args.height, args.difficulty, args.debug)
                 gfx.restart()
+            if event.key == pygame.K_PERIOD:
+                nd = round(args.difficulty + 0.01,3)
+                print(f"Difficulty: {args.difficulty} -> {nd}")
+                args.difficulty = nd
+                mf = MineField(args.width, args.height, args.difficulty, args.debug)
+                gfx.restart()                
+            if event.key == pygame.K_COMMA:
+                nd = round(args.difficulty - 0.01, 3)
+                print(f"Difficulty: {args.difficulty} -> {nd}")
+                args.difficulty = nd
+                mf = MineField(args.width, args.height, args.difficulty, args.debug)
+                gfx.restart()                
+            if event.key == pygame.K_i:
+                args.height += 1
+                gfx = Graphics(args.width,args.height)
+                gfx.init()
+                mf = MineField(args.width, args.height, args.difficulty, args.debug)
+                gfx.restart()                
+            if event.key == pygame.K_k:
+                args.height -= 1
+                gfx = Graphics(args.width,args.height)
+                gfx.init()
+                mf = MineField(args.width, args.height, args.difficulty, args.debug)
+                gfx.restart()                
+            if event.key == pygame.K_j:
+                args.width -= 1
+                gfx = Graphics(args.width,args.height)
+                gfx.init()
+                mf = MineField(args.width, args.height, args.difficulty, args.debug)
+                gfx.restart()                
+            if event.key == pygame.K_l:
+                args.width += 1
+                gfx = Graphics(args.width,args.height)
+                gfx.init()
+                mf = MineField(args.width, args.height, args.difficulty, args.debug)
+                gfx.restart()                
         if event.type == pygame.QUIT:
             running = False
             break

@@ -15,7 +15,7 @@ BORDER = 6
 
 class Graphics():
 
-    def __init__(self,mine_width,mine_height,mine_size=50):
+    def __init__(self,mine_width,mine_height,mine_size=30):
         self.mine_width = int(mine_width)
         self.mine_height = int(mine_height)
         self.mine_size = mine_size
@@ -33,7 +33,7 @@ class Graphics():
         self.screen = pygame.display.set_mode(self.resolution)
         pygame.display.set_caption("Minesweeper")
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.Font('mine-sweeper.ttf', 24)
+        self.font = pygame.font.Font('mine-sweeper.ttf', 18)
         pygame.display.flip()   
         pygame.event.set_allowed(None)
         pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
@@ -49,19 +49,16 @@ class Graphics():
                 mine = mf.grid[(x,y)]
                 xpos = x * self.mine_size
                 ypos = y * self.mine_size
-                if cover == COVERED:
+                if cover == COVERED or cover == FLAGGED:
                     pygame.draw.polygon(self.screen,(222,222,222),[(xpos,ypos),(xpos+self.mine_size,ypos),(xpos,ypos+self.mine_size)])
                     pygame.draw.polygon(self.screen,(128,128,128),[(xpos+self.mine_size,ypos),(xpos+self.mine_size,ypos+self.mine_size),(xpos,ypos+self.mine_size)])
                     pygame.draw.rect(self.screen,(192,192,192),pygame.Rect(xpos+BORDER,ypos+BORDER,self.mine_size-(BORDER*2),self.mine_size-(BORDER*2)))
-                elif cover == FLAGGED:
-                    pygame.draw.polygon(self.screen,(222,222,222),[(xpos,ypos),(xpos+self.mine_size,ypos),(xpos,ypos+self.mine_size)])
-                    pygame.draw.polygon(self.screen,(128,128,128),[(xpos+self.mine_size,ypos),(xpos+self.mine_size,ypos+self.mine_size),(xpos,ypos+self.mine_size)])
-                    pygame.draw.rect(self.screen,(192,192,192),pygame.Rect(xpos+BORDER,ypos+BORDER,self.mine_size-(BORDER*2),self.mine_size-(BORDER*2)))
+                if cover == FLAGGED:
                     flag = self.font.render('`', True, (255,0,0))
                     flag_rect = flag.get_rect()
                     flag_rect.center = (xpos + self.mine_size//2, ypos + self.mine_size//2)
                     self.screen.blit(flag, flag_rect)
-                else:
+                elif cover == VISIBLE:
                     pygame.draw.line(self.screen,(128,128,128),(xpos,ypos),(xpos,ypos+self.mine_size),3)
                     pygame.draw.line(self.screen,(128,128,128),(xpos,ypos),(xpos+self.mine_size,ypos),3)
                     if (x,y) == mf.losing_mine:
