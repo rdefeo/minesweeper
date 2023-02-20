@@ -6,23 +6,26 @@ from minefield import *
 from graphics import *
 import pygame
 import sys
+import argparse
 import time
 
 
-WIDTH, HEIGHT, DIFF = 10, 5, 0.1
-if len(sys.argv) == 3:
-    WIDTH, HEIGHT = sys.argv[1:3]
-elif len(sys.argv) == 4:
-    WIDTH, HEIGHT, DIFF = sys.argv[1:4]
-WIDTH = int(WIDTH)
-HEIGHT = int(HEIGHT)
-print(WIDTH, HEIGHT, DIFF)
+parser = argparse.ArgumentParser(description="Minesweeper")
+parser.add_argument('-W','--width',type=int,nargs='?',default=15,
+                    help='Width of minefield (default: %(default)i)')
+parser.add_argument('-H','--height',type=int,nargs='?',default=10,
+                    help='Height of minefield (default: %(default)i)')
+parser.add_argument('-D','--difficulty',type=float,nargs='?',default=0.1,
+                    help='Difficulty, measured as a percentage of total cells that have a bomb.\
+                    A value of 0.1 means 10%% of the cells will have a bomb. (default: %(default)f)')
+args = parser.parse_args()
 
-gfx = Graphics(WIDTH,HEIGHT)
+print(args.width,args.height,args.difficulty)
+
+gfx = Graphics(args.width,args.height)
 gfx.init()
 
-
-mf = MineField(WIDTH, HEIGHT, DIFF)
+mf = MineField(args.width,args.height,args.difficulty)
 mfc = MineFieldCover(mf)
 
 print("Starting game loop")
