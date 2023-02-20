@@ -5,10 +5,8 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from minefield import *
 from graphics import *
 import pygame
-import sys
 import argparse
 import time
-
 
 class MultiLineFormatter(argparse.HelpFormatter):
     def _split_lines(self, text, width):
@@ -16,15 +14,15 @@ class MultiLineFormatter(argparse.HelpFormatter):
             return text[3:].splitlines()
         return argparse.HelpFormatter._split_lines(self,text,width)
     
-parser = argparse.ArgumentParser(description="Minesweeper", formatter_class=MultiLineFormatter)
-parser.add_argument('-W','--width',type=int,nargs='?',default=15,
-                    help="ML|Width of minefield\n(default: %(default)i)")
-parser.add_argument('-H','--height',type=int,nargs='?',default=10,
-                    help="ML|Height of minefield\n(default: %(default)i)")
-parser.add_argument('-D','--difficulty',type=float,nargs='?',default=0.1,
+parser = argparse.ArgumentParser(description="Minesweeper game written with pygame", formatter_class=MultiLineFormatter)
+parser.add_argument('-W','--width',type=int,default=15,
+                    help="Width of minefield. Default = %(default)i")
+parser.add_argument('-H','--height',type=int,default=10,
+                    help="Height of minefield. Default = %(default)i")
+parser.add_argument('-D','--difficulty',type=float,default=0.1,
                     help="ML|Difficulty, measured as a percentage of total cells that have a mine.\n"
-                    "A value of 0.15 means 15%% of the cells will have a mine.\n"
-                    "(default: %(default)f)")
+                    "A value of 0.15 means 15%% of the cells will have a mine. Suggested range\n"
+                    "is between 0.10 and 0.30. Default = %(default).2f")
 parser.add_argument('--debug',action="store_true",help="Displays all mines and mine counts")
 args = parser.parse_args()
 
