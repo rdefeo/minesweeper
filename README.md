@@ -5,6 +5,13 @@ Simple minesweeper implementation using pygame. You can control the size of the 
 
 ![screenshot](screenshot.png)
 
+## Game Commands
+When running the game, the following keyboard/mouse commands are available:
+- left-click - Uncover the selected cell
+- right-click - Set/Unset the flag
+- r / R - Restart the game. Resets the minefield.
+- ESC / q / Q - Quit the game
+
 ## Usage
 ```
 $ python ./minesweeper.py --help
@@ -21,8 +28,3 @@ optional arguments:
   -D [DIFFICULTY], --difficulty [DIFFICULTY]
                         Difficulty, measured as a percentage of total cells that have a bomb. A value of 0.1 means 10% of the cells will have a bomb. (default: 0.100000)
 ```
-
-## Game Commands
-When running the game, the following keyboard commands are available:
-- r / R - Restart the game. Resets the minefield.
-- ESC / q / Q - Quit the game
