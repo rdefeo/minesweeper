@@ -4,6 +4,7 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from minefield import *
 from graphics import *
+from solver import *
 import pygame
 import argparse
 import time
@@ -79,9 +80,22 @@ while running:
                 running = False
                 break
             if event.key == pygame.K_r:
-                print("Restarting game")
                 mf = MineField(args.width, args.height, args.difficulty, args.debug)
                 gfx.restart()
+            if event.key == pygame.K_s:
+                s = Solver(mf)
+                best_move, action = s.best_move()
+                if not best_move:
+                    print("No best move! You're on your own! Eek!")
+                    continue
+                #print(f"Best move is: {best_move}, {['click','','flag'][action]}")
+                if mf.started == False:
+                    mf.place_mines(best_move)
+                if action == VISIBLE:
+                    mf.cover[best_move] = VISIBLE
+                    mf.try_clear_space(best_move)
+                elif action == FLAGGED:
+                    mf.cover[best_move] = FLAGGED
             if event.key == pygame.K_PERIOD:
                 nd = round(args.difficulty + 0.01,3)
                 print(f"Difficulty: {args.difficulty} -> {nd}")

@@ -30,7 +30,6 @@ class MineField():
     def create(self):
         # difficulty determines how many mines in grid as a percentage of overall cells
         print(f"Creating {self.mine_count} mines on {self.width} x {self.height}, difficulty = {self.difficulty}")
-    
 
         # nothing is visible at the start!
         for y in range(self.height):
@@ -39,18 +38,28 @@ class MineField():
 
         if self.debug:
             self.place_mines((self.width//2,self.height//2))
-                
+
+    def neighbors(self, pos):
+        for (dx,dy) in [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]:
+            n = (pos[0]+dx,pos[1]+dy)
+            if n not in self.grid:
+                continue
+            yield n
+        
     def place_mines(self, clicked):
         total = self.mine_count
         while total:
+            # try to place a mine at x,y
             b = randrange(self.width * self.height)
             x = b % self.width
             y = b // self.width
+            # don't place a mine here - it's instant game over!
             if (x,y) == clicked:
                 continue
+            # make sure the mine isn't one of our neighbor cells
             good_mine = True
-            for dx,dy in [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]:
-                if (x,y) == (clicked[0]+dx,clicked[1]+dy):
+            for n in self.neighbors(clicked):
+                if (x,y) == n:
                     good_mine = False
                     break
             if not good_mine:
@@ -65,11 +74,9 @@ class MineField():
                 if self.grid[(x,y)] == MINE:
                     continue
                 mines = 0
-                for dx,dy in [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]:
-                    p = (x+dx,y+dy)
-                    if p in self.grid:
-                        if self.grid[p] == MINE:
-                            mines += 1
+                for n in self.neighbors((x,y)):
+                    if self.grid[n] == MINE:
+                        mines += 1
                 self.grid[(x,y)] = mines
         self.started = True
                 
