@@ -35,3 +35,4 @@ optional arguments:
                         is between 0.10 and 0.30. Default = 0.10
   --debug               Displays all mines and mine counts
 ```
+
